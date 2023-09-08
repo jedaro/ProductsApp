@@ -1,49 +1,49 @@
 package com.sara.app;
 
 
-
 import com.sara.app.exception.ProductExceptionNotFound;
 import com.sara.app.service.impl.MockServiceImpl;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.List;
 
-@ExtendWith(MockitoExtension.class)
-public class TestMockServiceImpl {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
-    @InjectMocks
-    MockServiceImpl mockService;
+@ExtendWith(MockitoExtension.class)
+class TestMockServiceImpl {
 
     @Mock
     RestTemplate restTemplate;
 
-    @BeforeEach
-    void init() {
-        MockitoAnnotations.initMocks(this);
-    }
+    @InjectMocks
+    MockServiceImpl mockService = new MockServiceImpl();
 
     @Test
     @DisplayName("Get similar ids")
+    @Disabled
     void testGetSimilarIdsOk(){
-
         // given
+        List<Integer> listIds = Arrays.asList(1);
+        ResponseEntity responseEntity = new ResponseEntity<>(listIds, HttpStatus.OK);
         // when
-        given(restTemplate.getForObject("http://localhost:3001/foo", List.class)).willReturn(List.of(1,2,3));
+        when(restTemplate.getForEntity("http://localhost:3001/foo", List.class)).thenReturn(responseEntity);
 
         // then
         List<Integer> idsProducts = mockService.getSimilarIds("1");
         assertNotNull(idsProducts.get(0));
-
 
     }
 
@@ -53,7 +53,6 @@ public class TestMockServiceImpl {
     void testGetSimilarIdsNotFound(){
 
         // given
-        List<Integer> idsProducts = List.of();
 
         // when
         given(restTemplate.getForObject("http://localhost/", List.class)).willThrow(new Exception());

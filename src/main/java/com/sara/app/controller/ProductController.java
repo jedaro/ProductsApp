@@ -3,7 +3,6 @@ package com.sara.app.controller;
 
 import com.sara.app.exception.ProductExceptionNotFound;
 import com.sara.app.service.IProductAppService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +18,11 @@ import java.util.List;
 @RequestMapping("/")
 class ProductController {
 
-    @Autowired
-    IProductAppService iProductsAppService;
+    private final IProductAppService iProductsAppService;
+
+    ProductController(IProductAppService iProductsAppService){
+        this.iProductsAppService = iProductsAppService;
+    }
 
     @GetMapping("/product/{productId}/similar")
     public ResponseEntity<List> getProductSimilar(@PathVariable(value = "productId", required = true) String productId){

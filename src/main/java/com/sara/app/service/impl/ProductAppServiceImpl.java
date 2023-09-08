@@ -6,7 +6,6 @@ import com.sara.app.service.IMockService;
 import com.sara.app.service.IProductAppService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,10 +14,13 @@ import java.util.List;
 @Component
 public class ProductAppServiceImpl implements IProductAppService {
 
-    @Autowired
-    IMockService iMockService;
-
     Logger logger = LoggerFactory.getLogger(ProductAppServiceImpl.class);
+
+    private final IMockService iMockService;
+
+    public ProductAppServiceImpl(IMockService iMockService){
+        this.iMockService = iMockService;
+    }
 
     @Override
     public List<ProductDetail> getProductSimilar(String productId) {

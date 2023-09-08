@@ -6,13 +6,12 @@ import com.sara.app.exception.ProductExceptionNotFound;
 import com.sara.app.service.IMockService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class MockServiceImpl implements IMockService {
@@ -25,14 +24,12 @@ public class MockServiceImpl implements IMockService {
     private static String URL_MOCK_SERVICE = "http://localhost:3001/product/";
     private static String PATH_SERVICE = "/similarids";
 
-
     @Override
     public List getSimilarIds(String id) {
 
         try {
-            //return restTemplate.getForObject(URL_MOCK_SERVICE + id + PATH_SERVICE, List.class);
             ResponseEntity<List> responseEntity = restTemplate.getForEntity(URL_MOCK_SERVICE + id + PATH_SERVICE, List.class);
-            if (responseEntity.getStatusCode().is2xxSuccessful()){
+            if (Optional.ofNullable(responseEntity).isPresent() && responseEntity.getStatusCode().is2xxSuccessful()){
                 return responseEntity.getBody();
             }else {
                 throw new ProductExceptionNotFound("Ids Not Found");
@@ -47,9 +44,8 @@ public class MockServiceImpl implements IMockService {
     public ProductDetail getProductDetail(String id) {
 
         try {
-            //return restTemplate.getForObject(URL_MOCK_SERVICE + id, ProductDetail.class);
             ResponseEntity<ProductDetail> responseEntity = restTemplate.getForEntity(URL_MOCK_SERVICE + id, ProductDetail.class);
-            if (responseEntity.getStatusCode().is2xxSuccessful()){
+            if (Optional.ofNullable(responseEntity).isPresent() && responseEntity.getStatusCode().is2xxSuccessful()){
                 return responseEntity.getBody();
             }else {
                 throw new ProductExceptionNotFound("Product Not Found");
